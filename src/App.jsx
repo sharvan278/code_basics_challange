@@ -65,12 +65,14 @@ function App() {
 
   const handleRangeChange = (newRange) => {
     setAqiRange(newRange);
-    setSelectedState(null); // Clear selected state on range update
+    setSelectedState(null);
   };
 
   const filteredStates = stateData.filter(
     (state) => state.aqi >= aqiRange[0] && state.aqi <= aqiRange[1]
   );
+
+  const selectedData = stateData.find((s) => s.name === selectedState);
 
   const exportCSV = () => {
     const csvContent = [
@@ -101,7 +103,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <h1 >AQI Dashboard</h1>
+      <h1>AQI Dashboard</h1>
 
       <div className="controls">
         <label htmlFor="aqiSlider">Select AQI Range:</label>
@@ -113,6 +115,7 @@ function App() {
           value={aqiRange}
           onChange={handleRangeChange}
           allowCross={false}
+          id="aqiSlider"
         />
         <div className="aqi-values">
           <span>Min: {aqiRange[0]}</span>
@@ -135,30 +138,25 @@ function App() {
         ) : (
           <p>No states in this AQI range.</p>
         )}
+
+        {selectedState && (
+          <button onClick={() => setSelectedState(null)} className="clear-btn">
+            Clear Selection
+          </button>
+        )}
       </div>
 
       <div id="dashboard">
-        {selectedState && (
+        {selectedData && (
           <div
             className="metrics-card fade-in"
-            style={{
-              borderLeft: `8px solid ${
-                getAqiColor(stateData.find((s) => s.name === selectedState).aqi)
-              }`,
-            }}
+            style={{ borderLeft: `8px solid ${getAqiColor(selectedData.aqi)}` }}
           >
-            <h2>Metrics for {selectedState}:</h2>
-            {(() => {
-              const state = stateData.find((s) => s.name === selectedState);
-              return (
-                <>
-                  <p><strong>Current AQI:</strong> {state.aqi}</p>
-                  <p><strong>Hospital Admissions:</strong> {state.hospitalAdmissions}</p>
-                  <p><strong>Income Level:</strong> {state.incomeLevel}</p>
-                  <p><strong>Product Suggestion:</strong> {state.productSuggestion}</p>
-                </>
-              );
-            })()}
+            <h2>Metrics for {selectedData.name}:</h2>
+            <p><strong>Current AQI:</strong> {selectedData.aqi}</p>
+            <p><strong>Hospital Admissions:</strong> {selectedData.hospitalAdmissions}</p>
+            <p><strong>Income Level:</strong> {selectedData.incomeLevel}</p>
+            <p><strong>Product Suggestion:</strong> {selectedData.productSuggestion}</p>
           </div>
         )}
       </div>
