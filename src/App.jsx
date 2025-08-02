@@ -1,179 +1,174 @@
-// App.jsx
-import React, { useState, useEffect } from 'react';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+import { saveAs } from "file-saver";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css";
 
-const mockData = [
-  { id: 'MH', name: 'Maharashtra', aqi: 150, hospitalAdmissions: 50000, incomeLevel: 'High' },
-  { id: 'DL', name: 'Delhi', aqi: 280, hospitalAdmissions: 80000, incomeLevel: 'High' },
-  { id: 'KA', name: 'Karnataka', aqi: 120, hospitalAdmissions: 30000, incomeLevel: 'Medium' },
-  { id: 'TN', name: 'Tamil Nadu', aqi: 90, hospitalAdmissions: 25000, incomeLevel: 'Medium' },
-  { id: 'UP', name: 'Uttar Pradesh', aqi: 220, hospitalAdmissions: 70000, incomeLevel: 'Low' },
-  { id: 'WB', name: 'West Bengal', aqi: 180, hospitalAdmissions: 45000, incomeLevel: 'Low' },
-  { id: 'GJ', name: 'Gujarat', aqi: 110, hospitalAdmissions: 28000, incomeLevel: 'Medium' },
-  { id: 'RJ', name: 'Rajasthan', aqi: 190, hospitalAdmissions: 55000, incomeLevel: 'Low' },
-  { id: 'MP', name: 'Madhya Pradesh', aqi: 170, hospitalAdmissions: 40000, incomeLevel: 'Low' },
-  { id: 'PB', name: 'Punjab', aqi: 130, hospitalAdmissions: 32000, incomeLevel: 'Medium' },
-  { id: 'HR', name: 'Haryana', aqi: 160, hospitalAdmissions: 38000, incomeLevel: 'High' },
-  { id: 'KL', name: 'Kerala', aqi: 80, hospitalAdmissions: 20000, incomeLevel: 'High' },
-  { id: 'AP', name: 'Andhra Pradesh', aqi: 100, hospitalAdmissions: 27000, incomeLevel: 'Medium' },
-  { id: 'TG', name: 'Telangana', aqi: 95, hospitalAdmissions: 26000, incomeLevel: 'High' },
-  { id: 'OD', name: 'Odisha', aqi: 200, hospitalAdmissions: 60000, incomeLevel: 'Low' },
+const productMap = {
+  High: "Smart Filter Mask",
+  Middle: "Air Purifier Pro",
+  Medium: "Air Purifier Pro",
+  Low: "Budget Air Cleaner",
+};
+
+const rawStates = [
+  { name: "Andhra Pradesh", aqi: 120, hospitalAdmissions: 20000, incomeLevel: "Middle" },
+  { name: "Arunachal Pradesh", aqi: 90, hospitalAdmissions: 5000, incomeLevel: "Low" },
+  { name: "Assam", aqi: 150, hospitalAdmissions: 15000, incomeLevel: "Low" },
+  { name: "Bihar", aqi: 280, hospitalAdmissions: 30000, incomeLevel: "Low" },
+  { name: "Chhattisgarh", aqi: 190, hospitalAdmissions: 18000, incomeLevel: "Low" },
+  { name: "Goa", aqi: 70, hospitalAdmissions: 4000, incomeLevel: "High" },
+  { name: "Gujarat", aqi: 200, hospitalAdmissions: 21000, incomeLevel: "Middle" },
+  { name: "Haryana", aqi: 310, hospitalAdmissions: 26000, incomeLevel: "Middle" },
+  { name: "Himachal Pradesh", aqi: 85, hospitalAdmissions: 6000, incomeLevel: "High" },
+  { name: "Jharkhand", aqi: 170, hospitalAdmissions: 16000, incomeLevel: "Low" },
+  { name: "Karnataka", aqi: 110, hospitalAdmissions: 18000, incomeLevel: "High" },
+  { name: "Kerala", aqi: 95, hospitalAdmissions: 12000, incomeLevel: "High" },
+  { name: "Madhya Pradesh", aqi: 230, hospitalAdmissions: 25000, incomeLevel: "Low" },
+  { name: "Maharashtra", aqi: 150, hospitalAdmissions: 23000, incomeLevel: "High" },
+  { name: "Manipur", aqi: 75, hospitalAdmissions: 4000, incomeLevel: "Low" },
+  { name: "Meghalaya", aqi: 80, hospitalAdmissions: 3500, incomeLevel: "Low" },
+  { name: "Mizoram", aqi: 60, hospitalAdmissions: 2000, incomeLevel: "Low" },
+  { name: "Nagaland", aqi: 65, hospitalAdmissions: 3000, incomeLevel: "Low" },
+  { name: "Odisha", aqi: 160, hospitalAdmissions: 17000, incomeLevel: "Low" },
+  { name: "Punjab", aqi: 270, hospitalAdmissions: 24000, incomeLevel: "Middle" },
+  { name: "Rajasthan", aqi: 210, hospitalAdmissions: 22000, incomeLevel: "Middle" },
+  { name: "Sikkim", aqi: 55, hospitalAdmissions: 1500, incomeLevel: "Low" },
+  { name: "Tamil Nadu", aqi: 130, hospitalAdmissions: 19000, incomeLevel: "High" },
+  { name: "Telangana", aqi: 140, hospitalAdmissions: 20000, incomeLevel: "High" },
+  { name: "Tripura", aqi: 100, hospitalAdmissions: 5000, incomeLevel: "Low" },
+  { name: "Uttar Pradesh", aqi: 310, hospitalAdmissions: 67000, incomeLevel: "Low" },
+  { name: "Uttarakhand", aqi: 105, hospitalAdmissions: 9000, incomeLevel: "Middle" },
+  { name: "West Bengal", aqi: 190, hospitalAdmissions: 27000, incomeLevel: "Middle" },
+  { name: "Delhi", aqi: 290, hospitalAdmissions: 45000, incomeLevel: "Middle" },
 ];
 
-const getProductSuggestion = (incomeLevel) => {
-  switch (incomeLevel) {
-    case 'High':
-      return 'Premium, feature-rich air purifiers (e.g., IoT enabled, advanced filtration, sleek design)';
-    case 'Medium':
-      return 'Mid-range air purifiers (e.g., good filtration, essential features, balanced pricing)';
-    case 'Low':
-      return 'Economical, basic air purifiers (e.g., essential filtration, affordable, durable)';
-    default:
-      return 'No specific suggestion';
-  }
-};
+const stateData = rawStates.map((state) => ({
+  ...state,
+  productSuggestion: productMap[state.incomeLevel] || "Basic Protection Kit",
+}));
 
-const Filters = ({ filters, setFilters, applyFilters }) => {
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({ ...prev, [name]: value }));
+function getAqiColor(aqi) {
+  if (aqi <= 50) return "green";
+  if (aqi <= 100) return "lightgreen";
+  if (aqi <= 150) return "palegoldenrod";
+  if (aqi <= 200) return "orange";
+  if (aqi <= 300) return "red";
+  return "maroon";
+}
+
+function App() {
+  const [aqiRange, setAqiRange] = useState([0, 500]);
+  const [selectedState, setSelectedState] = useState(null);
+
+  const handleRangeChange = (newRange) => {
+    setAqiRange(newRange);
+    setSelectedState(null); // Clear selected state on range update
   };
 
-  const handleRangeChange = (e) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({ ...prev, [name]: parseInt(value) || 0 }));
-  };
-
-  return (
-    <div className="filters">
-      <h2>Filter Data</h2>
-
-      <label>State
-        <select name="state" value={filters.state} onChange={handleChange}>
-          <option value="">Select a State</option>
-          {mockData.map(d => (
-            <option key={d.id} value={d.id}>{d.name}</option>
-          ))}
-        </select>
-      </label>
-
-      <label>AQI Range
-        <div className="range-inputs">
-          <input type="number" name="aqiMin" placeholder="Min AQI" value={filters.aqiMin} onChange={handleRangeChange} />
-          <input type="number" name="aqiMax" placeholder="Max AQI" value={filters.aqiMax} onChange={handleRangeChange} />
-        </div>
-      </label>
-
-      <label>Max Hospital Admissions
-        <input type="number" name="hospitalAdmissions" value={filters.hospitalAdmissions} onChange={handleRangeChange} />
-      </label>
-
-      <label>Income Level
-        <select name="incomeLevel" value={filters.incomeLevel} onChange={handleChange}>
-          <option value="">All Income Levels</option>
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
-        </select>
-      </label>
-
-      <button onClick={applyFilters}>Apply Filters</button>
-    </div>
+  const filteredStates = stateData.filter(
+    (state) => state.aqi >= aqiRange[0] && state.aqi <= aqiRange[1]
   );
-};
 
-const Dashboard = ({ filteredData, selectedStateId }) => {
-  const selectedState = filteredData.find(d => d.id === selectedStateId);
+  const exportCSV = () => {
+    const csvContent = [
+      ["State", "AQI", "Hospital Admissions", "Income Level", "Product Suggestion"],
+      ...filteredStates.map((s) => [s.name, s.aqi, s.hospitalAdmissions, s.incomeLevel, s.productSuggestion]),
+    ]
+      .map((e) => e.join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, "aqi_data.csv");
+  };
+
+  const exportToPDF = () => {
+    const dashboard = document.getElementById("dashboard");
+    html2canvas(dashboard).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      pdf.save("AQI-Dashboard.pdf");
+    });
+  };
 
   return (
-    <div className="dashboard">
-      <h2>Market Intelligence Dashboard</h2>
+    <div className="app-container">
+      <h1 >AQI Dashboard</h1>
 
-      <div className="map-overview">
-        <h3>India Map Overview (Simplified)</h3>
-        <div className="state-grid">
-          {mockData.map(state => (
-            <div
-              key={state.id}
-              className={`state-box ${selectedStateId === state.id ? 'selected' : ''} ${state.aqi > 200 ? 'high-aqi' : ''}`}
-              title={`${state.name} (AQI: ${state.aqi})`}
-            >
-              {state.name}
-            </div>
-          ))}
+      <div className="controls">
+        <label htmlFor="aqiSlider">Select AQI Range:</label>
+        <Slider
+          range
+          min={0}
+          max={500}
+          step={10}
+          value={aqiRange}
+          onChange={handleRangeChange}
+          allowCross={false}
+        />
+        <div className="aqi-values">
+          <span>Min: {aqiRange[0]}</span>
+          <span>Max: {aqiRange[1]}</span>
         </div>
-        <p className="legend">
-          <span className="legend-box selected"></span> Selected State
-          <span className="legend-box other"></span> Other States
-          <span className="legend-box high-aqi-border"></span> High AQI (&gt;200)
-        </p>
       </div>
 
-      {selectedState ? (
-        <div className="metrics">
-          <h3>Metrics for {selectedState.name}</h3>
-          <div className="metrics-grid">
-            <div className="metric-card">
-              <p>Current AQI:</p>
-              <h4>{selectedState.aqi}</h4>
-            </div>
-            <div className="metric-card">
-              <p>Hospital Admissions (Annual):</p>
-              <h4>{selectedState.hospitalAdmissions.toLocaleString()}</h4>
-            </div>
-            <div className="metric-card">
-              <p>Predominant Income Level:</p>
-              <h4>{selectedState.incomeLevel}</h4>
-            </div>
-            <div className="metric-card wide">
-              <p>Product Type Suggestion:</p>
-              <p>{getProductSuggestion(selectedState.incomeLevel)}</p>
-            </div>
+      <div className="highlighted-states">
+        <h3>States in AQI Range:</h3>
+        {filteredStates.length > 0 ? (
+          filteredStates.map((state) => (
+            <button
+              key={state.name}
+              className={`state-button ${selectedState === state.name ? "active" : ""}`}
+              onClick={() => setSelectedState(state.name)}
+            >
+              {state.name}
+            </button>
+          ))
+        ) : (
+          <p>No states in this AQI range.</p>
+        )}
+      </div>
+
+      <div id="dashboard">
+        {selectedState && (
+          <div
+            className="metrics-card fade-in"
+            style={{
+              borderLeft: `8px solid ${
+                getAqiColor(stateData.find((s) => s.name === selectedState).aqi)
+              }`,
+            }}
+          >
+            <h2>Metrics for {selectedState}:</h2>
+            {(() => {
+              const state = stateData.find((s) => s.name === selectedState);
+              return (
+                <>
+                  <p><strong>Current AQI:</strong> {state.aqi}</p>
+                  <p><strong>Hospital Admissions:</strong> {state.hospitalAdmissions}</p>
+                  <p><strong>Income Level:</strong> {state.incomeLevel}</p>
+                  <p><strong>Product Suggestion:</strong> {state.productSuggestion}</p>
+                </>
+              );
+            })()}
           </div>
-        </div>
-      ) : (
-        <p className="no-selection">Apply filters or select a state to view detailed metrics.</p>
-      )}
-    </div>
-  );
-};
+        )}
+      </div>
 
-export default function App() {
-  const [filters, setFilters] = useState({
-    state: '',
-    aqiMin: 0,
-    aqiMax: 500,
-    hospitalAdmissions: 100000,
-    incomeLevel: '',
-  });
-
-  const [filteredData, setFilteredData] = useState(mockData);
-  const [selectedStateId, setSelectedStateId] = useState('');
-
-  const applyFilters = () => {
-    const newFilteredData = mockData.filter(item => {
-      const matchesState = filters.state === '' || item.id === filters.state;
-      const matchesAqi = item.aqi >= filters.aqiMin && item.aqi <= filters.aqiMax;
-      const matchesHospitalAdmissions = filters.hospitalAdmissions === 0 || item.hospitalAdmissions <= filters.hospitalAdmissions;
-      const matchesIncomeLevel = filters.incomeLevel === '' || item.incomeLevel === filters.incomeLevel;
-
-      return matchesState && matchesAqi && matchesHospitalAdmissions && matchesIncomeLevel;
-    });
-    setFilteredData(newFilteredData);
-    if (filters.state) setSelectedStateId(filters.state);
-    else setSelectedStateId('');
-  };
-
-  useEffect(() => {
-    applyFilters();
-  }, [filters]);
-
-  return (
-    <div className="app">
-      <div className="layout">
-        <Filters filters={filters} setFilters={setFilters} applyFilters={applyFilters} />
-        <Dashboard filteredData={filteredData} selectedStateId={selectedStateId} />
+      <div className="export-buttons">
+        <button className="export-btn" onClick={exportCSV}>Export CSV</button>
+        <button className="export-btn" onClick={exportToPDF}>Download PDF</button>
       </div>
     </div>
   );
 }
+
+export default App;

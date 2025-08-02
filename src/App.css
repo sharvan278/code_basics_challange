@@ -1,211 +1,153 @@
-/* App.css */
-
+/* Reset and base styles */
 body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f3f4f6;
-  color: #1f2937;
+  background-image: url('/aqi-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-family: 'Inter', sans-serif;
+}
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.4); /* Adjust for darkness */
+  z-index: -1;
+}
+.app-container {
+  background: url('/path-to-background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  padding: 20px;
+  /* color: white; */
+}
+/* styles.css */
+.heading-main {
+  color: #2980b9; /* Strong blue */
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
 }
 
-.app {
-  min-height: 100vh;
+.heading-sub {
+  color: #27ae60; /* Fresh green */
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+.app-container {
+  max-width: 1200px;
+  margin: auto;
   padding: 2rem;
 }
 
-.layout {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 2rem;
-  max-width: 1200px;
-  margin: auto;
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 2rem;
 }
 
-.filters {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 0.75rem;
+/* Controls Section */
+.controls {
+  background: #ffffff;
+  padding: 1rem 2rem;
+  border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.filters h2 {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.filters label {
-  display: block;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #374151;
-}
-
-.filters select,
-.filters input[type="number"] {
+#aqiSlider {
   width: 100%;
-  padding: 0.5rem;
-  margin-top: 0.3rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  font-size: 0.95rem;
 }
 
-.range-inputs {
+.aqi-values {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.3rem;
+  justify-content: space-between;
+  font-weight: 500;
+  color: #555;
 }
 
-.filters button {
-  padding: 0.6rem;
-  background-color: #2563eb;
-  color: white;
-  font-weight: 600;
+/* Highlighted States Section */
+.highlighted-states {
+  margin-bottom: 2rem;
+}
+
+.state-button {
+  background-color: #ecf0f1;
   border: none;
-  border-radius: 0.375rem;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  margin: 0.3rem;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.3s ease;
+  font-weight: 500;
 }
 
-.filters button:hover {
-  background-color: #1d4ed8;
+.state-button:hover {
+  background-color: #dfe6e9;
 }
 
-.dashboard {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.dashboard h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-}
-
-.map-overview {
-  background: #f9fafb;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.map-overview h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.state-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
-}
-
-.state-box {
-  padding: 0.75rem;
-  background-color: #dbeafe;
-  color: #1e3a8a;
-  text-align: center;
-  border-radius: 0.375rem;
-  cursor: default;
-  transition: all 0.3s ease;
-}
-
-.state-box:hover {
-  background-color: #bfdbfe;
-}
-
-.state-box.selected {
-  background-color: #10b981;
+.state-button.active {
+  background-color: #3498db;
   color: white;
-  transform: scale(1.05);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-.state-box.high-aqi {
-  border: 2px solid #ef4444;
+/* Metrics Card */
+#dashboard {
+  margin-bottom: 2rem;
 }
 
-.legend {
-  font-size: 0.85rem;
-  color: #6b7280;
-  margin-top: 0.5rem;
+.metrics-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  border-left: 8px solid #ccc;
+}
+
+.metrics-card h2 {
+  color: #34495e;
+}
+
+.metrics-card p {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+
+/* Export Buttons */
+.export-buttons {
   display: flex;
   gap: 1rem;
-  align-items: center;
+  justify-content: center;
 }
 
-.legend-box {
-  width: 12px;
-  height: 12px;
-  display: inline-block;
-  border-radius: 9999px;
-}
-
-.legend-box.selected {
-  background-color: #10b981;
-}
-
-.legend-box.other {
-  background-color: #dbeafe;
-}
-
-.legend-box.high-aqi-border {
-  border: 2px solid #ef4444;
-}
-
-.metrics {
-  background-color: #eff6ff;
-  padding: 1rem;
-  border: 1px solid #bfdbfe;
-  border-radius: 0.5rem;
-}
-
-.metrics h3 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #1e3a8a;
-  margin-bottom: 1rem;
-}
-
-.metrics-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.metric-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.375rem;
-  padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.metric-card p {
-  font-size: 0.9rem;
-  color: #4b5563;
-}
-
-.metric-card h4 {
-  font-size: 1.5rem;
-  color: #1e40af;
-  margin-top: 0.25rem;
-}
-
-.metric-card.wide {
-  grid-column: span 2;
-}
-
-.no-selection {
-  text-align: center;
-  color: #6b7280;
-  background-color: #f3f4f6;
-  padding: 2rem;
-  border-radius: 0.5rem;
+.export-btn {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
   font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.export-btn:hover {
+  background-color: #27ae60;
 }
